@@ -12,5 +12,8 @@ router.get('/:pid', placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacebyUserId);
 
+// any posrt request that targets /api/places/ will automatically reach this post route here.  
+// therefore the post request should contain just a slash '/'
+router.post("/", placesControllers.createPlace);
 
 module.exports = router;
