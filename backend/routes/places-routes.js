@@ -10,7 +10,7 @@ const router = express.Router();
 //register route on specific http methods
 router.get('/:pid', placesControllers.getPlaceById);
 
-router.get("/user/:uid", placesControllers.getPlacebyUserId);
+router.get("/user/:uid", placesControllers.getPlacesbyUserId);
 
 // any posrt request that targets /api/places/ will automatically reach this post route here.  
 // therefore the post request should contain just a slash '/'
