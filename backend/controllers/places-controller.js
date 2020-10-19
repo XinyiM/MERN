@@ -1,6 +1,8 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require('express-validator');
-const uuid = require("uuid/dist/v4");
+const { v4 : uuidv4 } = require("uuid");
+const getCoordsForAddress = require("../util/location");
+
 let DUMMY_PLACES = [
     {
         id:"p1",
@@ -52,17 +54,28 @@ const getPlacesbyUserId =  (req, res, next) => {
     res.json({ places });
 };
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
         console.log(errors);
-        throw new HttpError("Invalid inputs passed, please check your data.", 422);
+        // in async functions, you should use next but not throw
+        next(new HttpError("Invalid inputs passed, please check your data.", 422));
     }
     //get data from post request body.
-    const { title, description, coordinates, address, creator} = req.body;
+    const { title, description, address, creator} = req.body;
+    
+    // use await when call an async function
+    let coordinates;
+    // handle error in an async way => wrap this into try/catch block
+    try{
+        coordinates = await getCoordsForAddress(address);
+    } catch(error){
+        return next(error);
+    }
+
     // Just a shortcut for const title = req.body.title;
     const createdPlace = {
-        id: uuid(),
+        id: uuidv4(),
         title,
         description,
         location: coordinates,
