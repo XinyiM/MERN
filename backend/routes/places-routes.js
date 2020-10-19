@@ -1,5 +1,5 @@
 const express = require('express');
-
+const { check } = require('express-validator');
 const placesControllers = require("../controllers/places-controller");
 
 const router = express.Router();
@@ -12,10 +12,27 @@ router.get('/:pid', placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacesbyUserId);
 
-// any posrt request that targets /api/places/ will automatically reach this post route here.  
+// any post request that targets /api/places/ will automatically reach this post route here.  
 // therefore the post request should contain just a slash '/'
-router.post("/", placesControllers.createPlace);
+router.post(
+    "/", 
+    [
+        check('title')
+            .not()
+            .isEmpty(), 
+        check('description').isLength({min: 5, }),
+        check('address')
+            .not()
+            .isEmpty(),
+    ],
+    placesControllers.createPlace);
+// you can add multiple middleware 
 
-router.patch('/:pid', placesControllers.updatePlaceById);
+router.patch('/:pid',
+    [
+        check('title').notEmpty()
+        ,check('description').isLength({min: 5, })
+    ],
+    placesControllers.updatePlaceById);
 router.delete('/:pid', placesControllers.deletePlace);
 module.exports = router;
