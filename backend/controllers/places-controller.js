@@ -85,7 +85,8 @@ const updatePlaceById = (req, res, next) => {
 };
 
 const deletePlace = (req, res, next) => {
-
+    DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== req.params.pid);
+    res.status(200).json({message: "Deleted Place."});
 };
 
 exports.getPlaceById = getPlaceById;
