@@ -16,4 +16,6 @@ router.get("/user/:uid", placesControllers.getPlacebyUserId);
 // therefore the post request should contain just a slash '/'
 router.post("/", placesControllers.createPlace);
 
+router.patch('/:pid', placesControllers.updatePlaceById);
+router.delete('/:pid', placesControllers.deletePlace);
 module.exports = router;

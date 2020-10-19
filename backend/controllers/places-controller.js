@@ -69,6 +69,27 @@ const createPlace = (req, res, next) => {
 
 };
 
+const updatePlaceById = (req, res, next) => {
+    // only allowed to update description and title
+    const { title, description } = req.body;
+    const placeId = req.params.pid;
+    const updatedPlace = { ...DUMMY_PLACES.find(p => p.id === placeId)};
+    // create a copy of the place
+    const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId);
+    updatedPlace.title = title;
+    updatedPlace.description = description;
+
+    DUMMY_PLACES[placeIndex] = updatedPlace;
+    res.status(200).json({place: updatedPlace});
+
+};
+
+const deletePlace = (req, res, next) => {
+
+};
+
 exports.getPlaceById = getPlaceById;
 exports.getPlacebyUserId = getPlacebyUserId;
 exports.createPlace = createPlace;
+exports.updatePlaceById = updatePlaceById;
+exports.deletePlace = deletePlace;
