@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');;
 const placesRoutes = require("./routes/places-routes");
+const HttpError = require('./models/http-error');
 
 const app = express();
  
@@ -15,6 +16,12 @@ app.use(bodyParser.json());
 
 //use the placesRoutes as a middleware
 app.use('/api/places', placesRoutes); // => /api/palces/something
+
+//add middleware is only reached if some request that didnt get a response
+app.use((req, res, next) => {
+    const error = new HttpError('Could not find this route', 404);
+    throw error;
+});
 
 // error handling
 app.use((error, req, res, next) => {
