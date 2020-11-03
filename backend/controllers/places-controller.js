@@ -2,6 +2,7 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require('express-validator');
 const { v4 : uuidv4 } = require("uuid");
 const getCoordsForAddress = require("../util/location");
+const Place = require('../models/place');
 
 let DUMMY_PLACES = [
     {
@@ -74,15 +75,25 @@ const createPlace = async (req, res, next) => {
     }
 
     // Just a shortcut for const title = req.body.title;
-    const createdPlace = {
-        id: uuidv4(),
+    const createdPlace = new Place({
         title,
         description,
-        location: coordinates,
+        image: 'https://images.app.goo.gl/vi8KGGrd3bBseVRi9',
         address,
+        location: coordinates,
         creator
-    };
-    DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
+    });
+    
+    try{
+        await createdPlace.save();
+    } catch (err){
+        const error = new HttpError(
+            'Creating place failed, please try again!',
+            500
+        );
+        return next(err);
+    }
+    // DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
     res.status(201).json({place: createdPlace}); // 201 is code when sth is created on the server
     // 200 is the normal success code
 
