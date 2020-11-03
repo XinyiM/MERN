@@ -7,6 +7,10 @@ const router = express.Router();
 // Goal of this API: have a get request where id is part of the URL
 // return the information with the id p1, thus the id should be encoded in the url
 
+router.get("/", (req, res, next) => {
+    res.json({message: " Return all the places"});
+})
+
 //register route on specific http methods
 router.get('/:pid', placesControllers.getPlaceById);
 
