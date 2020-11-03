@@ -1,8 +1,9 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require('express-validator');
-const { v4 : uuidv4 } = require("uuid");
+// const { v4 : uuidv4 } = require("uuid");
 const getCoordsForAddress = require("../util/location");
 const Place = require('../models/place');
+
 
 let DUMMY_PLACES = [
     {
@@ -19,23 +20,43 @@ let DUMMY_PLACES = [
 ];
 
 // Middleware Functions Controllers
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
     // console.log("GET Request in Places");
-    const placeId = req.params.pid; // {pid: 'p1'}
-    const place = DUMMY_PLACES.find((p) => {
-        return p.id === placeId;
-    });
-    if(!place){
+    // const place = DUMMY_PLACES.find((p) => {
+    //     return p.id === placeId;
+    // });
         // const error = new Error("Could not find a place for the provided id.");
         // error.code = 404;
         // throw error; // trigger the error handling 
         // // do not return
-        throw new HttpError("Could not find a place for the provided id.", 404);
-    }
-    res.json({place}); // { place } => {place : place }
+    // 1. Place is a mongoose object, turn it into javascript object
+    // 2. remove the underscore from the _id
     // send response containing JSON format
     // res.json({message: 'It Works!'});
+    const placeId = req.params.pid; // { pid: 'p1' }
+    let place;
+    try {
+      place =  await Place.findById(placeId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a place.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!place) {
+      const error = new HttpError(
+        'Could not find a place for the provided id.',
+        404
+      );
+      return next(error);
+    }
+    console.log(place);
+    res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place }   
 }
+
+
 
 // function getPlaceById() {...}
 // const getPlaceById = function() {....}
@@ -85,6 +106,7 @@ const createPlace = async (req, res, next) => {
     });
     
     try{
+        console.log(createdPlace);
         await createdPlace.save();
     } catch (err){
         const error = new HttpError(
