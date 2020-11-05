@@ -5,6 +5,7 @@ const getCoordsForAddress = require("../util/location");
 const Place = require('../models/place');
 const User = require('../models/user');
 const mongoose = require('mongoose');
+const user = require("../models/user");
 let DUMMY_PLACES = [
     {
         id:"p1",
@@ -132,6 +133,7 @@ const createPlace = async (req, res, next) => {
     }
 
     console.log(user);
+    console.log(typeof user.places);
 
     try{
         // console.log("createdPlace:\n"+ createdPlace);
@@ -195,7 +197,8 @@ const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
     let place;
     try{
-        place = await Place.findById(placeId);
+        //which lets you reference documents in other collections.
+        place = await Place.findById(placeId).populate('creator');
     }catch (err){
         const error = new HttpError(
             "Something went wrong, cannot delete the place.",
@@ -204,8 +207,20 @@ const deletePlace = async (req, res, next) => {
         return next(error);
     }
 
+    console.log(typeof placeId);
+    if(!place){
+        const error = new HttpError('Could not find the place for this id.', 404);
+        return next(error);
+    }
+
     try{
-        await place.remove();
+        // Dont forget await startSession!!!
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await place.remove({session: sess});
+        place.creator.places.pull(place);
+        await place.creator.save({session: sess});
+        await sess.commitTransaction();
     }catch(err){
         const error = new HttpError(
             "Something went wrong, cannot delete the place.",
