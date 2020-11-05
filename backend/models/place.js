@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-
+const User = require("../models/user");
 
 const placeSchema = new Schema({
     title: { type: String, required: true },
@@ -12,7 +12,8 @@ const placeSchema = new Schema({
         lat: { type: Number, required: true },
         lng: { type: Number, required: true },
     },
-    creator: { type: String, required: true }
+    // establish the relation from creation
+    creator: { type: mongoose.Types.ObjectId , required: true, ref: 'User' }
 });
 
 module.exports = mongoose.model('Place', placeSchema);

@@ -6,7 +6,7 @@ const User = require('../models/user');
 const DUMMY_USERS = [
     {
         id: 'u1',
-        name: 'Max Balba',
+        name: 'Max Balba', 
         email: "bala@gmail.com",
         password: "123456"
     }
@@ -36,7 +36,7 @@ const signUp = async (req, res, next) => {
             new HttpError("Invalid inputs passed, please check your data.", 422)
         );
     }
-    const { name, email, password, places } = req.body;
+    const { name, email, password } = req.body;
     
     let existingUser;
     try {
@@ -62,7 +62,8 @@ const signUp = async (req, res, next) => {
         email,
         image: 'https://images.app.goo.gl/vi8KGGrd3bBseVRi9',
         password,
-        places,
+        places : []
+        // when the User is created, the places is an empty array
     });
 
     try{

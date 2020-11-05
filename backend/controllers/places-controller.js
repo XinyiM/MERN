@@ -3,8 +3,8 @@ const { validationResult } = require('express-validator');
 // const { v4 : uuidv4 } = require("uuid");
 const getCoordsForAddress = require("../util/location");
 const Place = require('../models/place');
-
-
+const User = require('../models/user');
+const mongoose = require('mongoose');
 let DUMMY_PLACES = [
     {
         id:"p1",
@@ -115,17 +115,41 @@ const createPlace = async (req, res, next) => {
         location: coordinates,
         creator
     });
-    
+
+    let user;
     try{
-        console.log(createdPlace);
-        await createdPlace.save();
-    } catch (err){
+        user = await User.findById(creator);
+        // console.log(user);
+    }catch(err){
         const error = new HttpError(
-            'Creating place failed, please try again!',
+            'Creating place failed, please try again.',
             500
         );
-        return next(err);
+        return next(error);
     }
+    if(!user){
+        return next(new HttpError("Could not find the user for the provided id."));
+    }
+
+    console.log(user);
+
+    try{
+        // console.log("createdPlace:\n"+ createdPlace);
+        //transaction and session
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await createdPlace.save({ session: sess});
+        user.places.push(createdPlace);
+        await user.save({session: sess}) // this operation should be part of the session
+        await sess.commitTransaction();
+    } catch (err){
+        const error = new HttpError(
+            'Transaction roll back! Creating place failed, please try again!',
+            500
+        );
+        return next(error);
+    }
+    
     // DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
     res.status(201).json({place: createdPlace}); // 201 is code when sth is created on the server
     // 200 is the normal success code
