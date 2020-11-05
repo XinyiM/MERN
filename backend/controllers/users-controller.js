@@ -1,16 +1,7 @@
 const HttpError = require("../models/http-error");
-const uuid = require('uuid/dist/v4');
 const { validationResult } = require('express-validator');
 const User = require('../models/user');
 
-const DUMMY_USERS = [
-    {
-        id: 'u1',
-        name: 'Max Balba', 
-        email: "bala@gmail.com",
-        password: "123456"
-    }
-];
 
 const getAllUsers = async (req, res, next) => {
     let users;
@@ -81,8 +72,6 @@ const signUp = async (req, res, next) => {
 
 const logIn = async (req, res, next) => {
     const { email, password } = req.body;
-    // const identifiedUser = DUMMY_USERS.find(u => u.email === email);
-    
     let existingUser;
     try {
         existingUser = await User.findOne({ email: email })

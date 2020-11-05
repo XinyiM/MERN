@@ -1,24 +1,10 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require('express-validator');
-// const { v4 : uuidv4 } = require("uuid");
 const getCoordsForAddress = require("../util/location");
 const Place = require('../models/place');
 const User = require('../models/user');
 const mongoose = require('mongoose');
-const user = require("../models/user");
-let DUMMY_PLACES = [
-    {
-        id:"p1",
-        title:"Empire State Building",
-        description: "One of the most famous sky scrapers in the world!",
-        location: {
-            lat: 40.7484474,
-            lng: -73.981516
-        },
-        address: "20 W 34th St. New York, NY  10001",
-        creator: 'u1'
-    }
-];
+
 
 // Middleware Functions Controllers
 const getPlaceById = async (req, res, next) => {
@@ -53,20 +39,14 @@ const getPlaceById = async (req, res, next) => {
       );
       return next(error);
     }
-    console.log(place);
-    res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place }   
+    res.json({ place: place.toObject({ getters: true }) }); 
 }
 
 
 
-// function getPlaceById() {...}
-// const getPlaceById = function() {....}
-
-
 const getPlacesbyUserId = async (req, res, next) => {
-    const userId = req.params.uid; // { pid: 'p1' }
+    const userId = req.params.uid; 
     let places;
-    console.log(userId);
     try {
       places = await Place.find({creator: userId});
     } catch (err) {
@@ -84,14 +64,12 @@ const getPlacesbyUserId = async (req, res, next) => {
       );
       return next(error);
     }
-    // console.log(places);
     res.json({ places: places.map(place => place.toObject({ getters: true})) }); 
 };
 
 const createPlace = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        console.log(errors);
         // in async functions, you should use next but not throw
         next(new HttpError("Invalid inputs passed, please check your data.", 422));
     }
@@ -120,7 +98,6 @@ const createPlace = async (req, res, next) => {
     let user;
     try{
         user = await User.findById(creator);
-        // console.log(user);
     }catch(err){
         const error = new HttpError(
             'Creating place failed, please try again.',
@@ -132,11 +109,7 @@ const createPlace = async (req, res, next) => {
         return next(new HttpError("Could not find the user for the provided id."));
     }
 
-    console.log(user);
-    console.log(typeof user.places);
-
     try{
-        // console.log("createdPlace:\n"+ createdPlace);
         //transaction and session
         const sess = await mongoose.startSession();
         sess.startTransaction();
@@ -151,8 +124,6 @@ const createPlace = async (req, res, next) => {
         );
         return next(error);
     }
-    
-    // DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
     res.status(201).json({place: createdPlace}); // 201 is code when sth is created on the server
     // 200 is the normal success code
 
@@ -206,8 +177,6 @@ const deletePlace = async (req, res, next) => {
         );
         return next(error);
     }
-
-    console.log(typeof placeId);
     if(!place){
         const error = new HttpError('Could not find the place for this id.', 404);
         return next(error);
