@@ -1,9 +1,9 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 // useStata allows you to write some logic that 
 // runs when you want to change the state to do some complex 
 // than just set a value
 import "./Input.css";
-import { validate } from "../../util/validator";
+import { validate } from "../../util/validators";
 
 
 const inputReducer = (state, action) => {
@@ -35,6 +35,16 @@ const Input = props => {
     });
     // return: currentState, dispatchFunction 
     // this will trigger if the user enters something.
+
+    const { id, onInput } = props;
+    const { value, isValid } = inputState;
+
+    useEffect(() => {
+        onInput(id, value,isValid)
+    }, [id, value, isValid, onInput] );
+    // might lead to infinite loops
+    // onInput takes from props from newPlace
+
     const changeHandler = event => {
         // event is automatically got object on the change event
         // value is the value the user entered.
@@ -65,6 +75,7 @@ const Input = props => {
                 id={props.id}
                 rows={props.rows || 3}
                 onChange={changeHandler}
+                onBlur={touchHandler}
                 value={inputState.value} />
         );
 
