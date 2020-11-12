@@ -1,0 +1,50 @@
+import { useCallback, useReducer } from 'react';
+
+const formReducer = (state, action) => {
+    switch (action.type) {
+      case 'INPUT_CHANGE':
+        let formIsValid = true;
+        for (const inputId in state.inputs) {
+          if (inputId === action.inputId) {
+            formIsValid = formIsValid && action.isValid;
+          } else {
+            formIsValid = formIsValid && state.inputs[inputId].isValid;
+          }
+        }
+        return {
+          ...state,
+          inputs: { // Attention: 是inputs不是input!!
+            ...state.inputs,
+            [action.inputId]: {
+              value: action.value,
+              isValid: action.isValid
+            }
+          },
+          isValid: formIsValid
+        };
+      default:
+        return state;
+    }
+  };
+
+const useForm = (initialInputs, initialFormValidity) => {
+    const [formState, dispatch] = useReducer(formReducer, {
+        inputs: initialInputs,
+        // a nested object that stores the info of individual inputs
+        isValid: initialFormValidity
+        // isValid stores the info whether the overall form is valid.
+      });
+
+      const inputHandler = useCallback((id, value, isValid) => {
+        dispatch({
+          type: 'INPUT_CHANGE',
+          value: value,
+          isValid: isValid,
+          inputId: id
+        })
+      }, []);
+
+      return [formState, inputHandler];
+};
+
+export default useForm;
