@@ -11,6 +11,7 @@ import NewPlace from './places/pages/NewPlace';
 import UserPlaces from './places/pages/UserPlaces';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UpdatePlace from './places/pages/UpdatePlaces';
+import Auth from './user/pages/Auth';
 
 const App = () => {
   return (
@@ -31,6 +32,9 @@ const App = () => {
           {/* in case the new is interpreted as the placeId */}
           <Route path="/places/:placeId">
             <UpdatePlace/>
+          </Route>
+          <Route path="/auth" >
+            <Auth/>
           </Route>
           <Redirect to="/" />
         </Switch>

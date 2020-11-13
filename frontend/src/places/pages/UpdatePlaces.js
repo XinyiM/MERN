@@ -38,16 +38,17 @@ const UpdatePlace = () => {
     const [isLoading, setIsLoading] = useState(true);
     const placeId = useParams().placeId;
 
-    const [formState, inputHandler, setFormData] = useForm({
-        title: {
-            value: '',
-            isValid: false
+    const [formState, inputHandler, setFormData] = useForm(
+        {
+            title: {
+                value: '',
+                isValid: false
+            },
+            description: {
+                value: '',
+                isValid: false
+            }
         },
-        description: {
-            value: '',
-            isValid: false
-        }
-    },
         false
     );
 
