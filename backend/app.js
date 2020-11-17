@@ -17,6 +17,16 @@ const app = express();
 // convert it into reguar js Data structures and call next functions automatically
 app.use(bodyParser.json());
 
+app.use((req, res, next ) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+        'Access-Control-Allow-Headers', 
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next(); // let the request to continue with other middlewares 
+});
+
 //use the placesRoutes as a middleware
 app.use('/api/places', placesRoutes); // => /api/palces/something
 app.use('/api/users', userRoutes);
@@ -38,7 +48,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-    .connect('mongodb+srv://new_user:JbVbesoJjymhEdGC@cluster0.oxhrw.mongodb.net/places?retryWrites=true&w=majority') 
+    .connect('mongodb+srv://new_user:JbVbesoJjymhEdGC@cluster0.oxhrw.mongodb.net/mern?retryWrites=true&w=majority') 
     .then(() => {
 // listen on a server port
         app.listen(5000);

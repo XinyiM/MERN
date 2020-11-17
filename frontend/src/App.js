@@ -71,22 +71,6 @@ const App = () => {
         <MainNavigation />
         <main>
           <Switch>
-            {/* <Route path="/" exact>
-              <Users />
-            </Route>
-            <Route path='/:userId/places'>
-              <UserPlaces />
-            </Route>
-            <Route path="/places/new" exact>
-              <NewPlace />
-            </Route>
-            <Route path="/places/:placeId">
-              <UpdatePlace />
-            </Route>
-            <Route path="/auth" >
-              <Auth />
-            </Route>
-            <Redirect to="/" /> */}
             {routes}
           </Switch>
         </main>

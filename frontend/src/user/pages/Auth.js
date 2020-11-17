@@ -59,15 +59,38 @@ const Auth = () => {
         setIsLoginMode(preMode => !preMode);
     }
 
-    const authSubmitHandler = event => {
+    const authSubmitHandler = async event => {
         event.preventDefault();
-        console.log(formState.inputs);
+        // console.log(formState.inputs);
+
+        if (isLogin) {
+
+        } else {
+            try {
+                // send a http request to the backend
+                const response = await fetch("http://localhost:5000/api/users/signup", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formState.inputs.name.value,
+                        email: formState.inputs.email.value,
+                        password: formState.inputs.password.value
+                    })
+                }); // a string points to the backend
+                const responseData = await response.json();
+                console.log(responseData);
+            } catch (err) {
+                console.log(err);
+            }
+        }
         auth.login();
     }
     return (
         <Card className='authentication'>
             <h2> Login Required </h2>
-            <hr/>
+            <hr />
             <form onSubmit={authSubmitHandler}>
                 {!isLogin && <Input
                     element='input'
