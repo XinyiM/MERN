@@ -51,7 +51,7 @@ const signUp = async (req, res, next) => {
     const createdUser = new User({
         name, 
         email,
-        image: 'https://images.app.goo.gl/vi8KGGrd3bBseVRi9',
+        image: 'https://attach.setn.com/newsimages/2015/03/20/237112-XXL.jpg',
         password,
         places : []
         // when the User is created, the places is an empty array

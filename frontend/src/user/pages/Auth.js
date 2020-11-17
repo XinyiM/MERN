@@ -68,12 +68,33 @@ const Auth = () => {
     const authSubmitHandler = async event => {
         event.preventDefault();
         // console.log(formState.inputs);
-
+        setIsLoading(true);
         if (isLogin) {
-
+            try {
+                // send a http request to the backend
+                const response = await fetch("http://localhost:5000/api/users/login", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: formState.inputs.email.value,
+                        password: formState.inputs.password.value
+                    })
+                }); // a string points to the backend
+                const responseData = await response.json();
+                if (!response.ok) {
+                    //error handling 
+                    throw new Error(responseData.message);
+                }
+                setIsLoading(false);
+                auth.login();
+            } catch (err) {
+                setIsLoading(false);
+                setError(err.message || 'Something went wrong, please try again!');
+            }
         } else {
             try {
-                setIsLoading(true);
                 // send a http request to the backend
                 const response = await fetch("http://localhost:5000/api/users/signup", {
                     method: 'POST',
