@@ -70,7 +70,7 @@ const Auth = () => {
         if (isLogin) {
             try {
                 // send a http request to the backend
-                await sendRequest(
+                const responseData = await sendRequest(
                     "http://localhost:5000/api/users/login",
                     'POST',
                     JSON.stringify({
@@ -81,7 +81,7 @@ const Auth = () => {
                         'Content-Type': 'application/json'
                     },
                 ); // a string points to the backend
-                auth.login();
+                auth.login(responseData.user.id);
             } catch (err) { }
         } else {
             try {
@@ -92,13 +92,13 @@ const Auth = () => {
                     JSON.stringify({
                         name: formState.inputs.name.value,
                         email: formState.inputs.email.value,
-                        password: formState.inputs.password.value
+                        password: formState.inputs.password,
                     }),
                     {
                         'Content-Type': 'application/json'
                     },
                 ); // a string points to the backend
-                console.log(responseData)
+                // console.log(responseData)
                 auth.login();
             } catch (err) { }
         }
