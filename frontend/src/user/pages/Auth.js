@@ -86,7 +86,7 @@ const Auth = () => {
         } else {
             try {
                 // send a http request to the backend
-                const responseData = await sendRequest(
+                await sendRequest(
                     "http://localhost:5000/api/users/signup",
                     'POST',
                     JSON.stringify({
