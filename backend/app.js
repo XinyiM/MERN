@@ -48,12 +48,14 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-    .connect('mongodb+srv://new_user:JbVbesoJjymhEdGC@cluster0.oxhrw.mongodb.net/mern?retryWrites=true&w=majority') 
+    .connect('mongodb+srv://new_user:36BI6H05ZpG3JrkM@cluster0.oxhrw.mongodb.net/mern?retryWrites=true&w=majority') 
     .then(() => {
 // listen on a server port
         app.listen(5000);
         console.log("Connected Successfully!");
     })
     .catch((err) => {
+        console.log("ERROR:\n");
         console.log(err);
     });
+ 

@@ -4,6 +4,7 @@ import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 import {
     VALIDATOR_MINLENGTH,
@@ -44,11 +45,12 @@ const Auth = () => {
                     // because we did not copy the former state and then rewrite the name property 
                     // cause cannot read isValid property from undefined
                     ...formState.inputs,
-                    name: undefined
+                    name: undefined,
                     // although we copied the old fields, 
                     // it still tries to access the isValid property of the undefined name
                     // which cause crash,
                     // should add a if-check to avoid the undefined case.
+                    image: undefined                
                 },
                 formState.inputs.email.isValid && formState.inputs.password.isValid)
         } else {
@@ -57,6 +59,10 @@ const Auth = () => {
                     ...formState.inputs,
                     name: {
                         value: '',
+                        isValid: false
+                    },
+                    image: {
+                        value: null,
                         isValid: false
                     }
                 }, false
@@ -67,6 +73,7 @@ const Auth = () => {
 
     const authSubmitHandler = async event => {
         event.preventDefault();
+        console.log(formState.inputs);
         if (isLogin) {
             try {
                 // send a http request to the backend
@@ -114,16 +121,19 @@ const Auth = () => {
                 <h2> Login Required </h2>
                 <hr />
                 <form onSubmit={authSubmitHandler}>
-                    {!isLogin && <Input
-                        element='input'
-                        id='name'
-                        type='text'
-                        label='Your Name'
-                        validators={[VALIDATOR_REQUIRE()]}
-                        errorText="Please enter a name"
-                        onInput={inputHandler}
-                    />}
-                    <Input id="email"
+                    {!isLogin &&
+                        <Input
+                            element='input'
+                            id='name'
+                            type='text'
+                            label='Your Name'
+                            validators={[VALIDATOR_REQUIRE()]}
+                            errorText="Please enter a name"
+                            onInput={inputHandler}
+                        />}
+                    {!isLogin && <ImageUpload center id="image" onInput={inputHandler}/>}
+                    <Input
+                        id="email"
                         element="input"
                         type="email"
                         label="E-mail"
@@ -131,7 +141,8 @@ const Auth = () => {
                         errorText="Please enter a valid email."
                         onInput={inputHandler}
                     />
-                    <Input id="password"
+                    <Input
+                        id="password"
                         element="input"
                         type="password"
                         label="Password"
