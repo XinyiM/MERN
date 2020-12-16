@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');;
 const mongoose = require('mongoose');
@@ -16,6 +18,9 @@ const app = express();
 // parse any incoming request body and extract any JSON data, 
 // convert it into reguar js Data structures and call next functions automatically
 app.use(bodyParser.json());
+
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+// just return a serving, do not execute anything
 
 app.use((req, res, next ) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,6 +44,12 @@ app.use((req, res, next) => {
 
 // error handling
 app.use((error, req, res, next) => {
+    if(req.file){
+        // delete the file
+        fs.unlink(req.file.path, (err) => {
+            console.log(err);
+        })
+    }
     if(res.headerSent){
         return next(error);
     }
