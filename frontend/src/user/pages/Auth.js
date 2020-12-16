@@ -50,7 +50,7 @@ const Auth = () => {
                     // it still tries to access the isValid property of the undefined name
                     // which cause crash,
                     // should add a if-check to avoid the undefined case.
-                    image: undefined                
+                    image: undefined
                 },
                 formState.inputs.email.isValid && formState.inputs.password.isValid)
         } else {
@@ -76,37 +76,34 @@ const Auth = () => {
         console.log(formState.inputs);
         if (isLogin) {
             try {
-                // send a http request to the backend
                 const responseData = await sendRequest(
-                    "http://localhost:5000/api/users/login",
+                    'http://localhost:5000/api/users/login',
                     'POST',
                     JSON.stringify({
-                        email: formState.inputs.email.value,
-                        password: formState.inputs.password.value
+                      email: formState.inputs.email.value,
+                      password: formState.inputs.password.value
                     }),
                     {
-                        'Content-Type': 'application/json'
-                    },
-                ); // a string points to the backend
-                auth.login(responseData.user.id);
+                      'Content-Type': 'application/json'
+                    }
+                  );
+                  auth.login(responseData.user.id);
             } catch (err) { }
         } else {
             try {
                 // send a http request to the backend
-                await sendRequest(
-                    "http://localhost:5000/api/users/signup",
+                const formData = new FormData();
+                formData.append('email', formState.inputs.email.value);
+                formData.append('name', formState.inputs.name.value);
+                formData.append('password', formState.inputs.password.value);
+                formData.append('image', formState.inputs.image.value);
+                const responseData = await sendRequest(
+                    'http://localhost:5000/api/users/signup',
                     'POST',
-                    JSON.stringify({
-                        name: formState.inputs.name.value,
-                        email: formState.inputs.email.value,
-                        password: formState.inputs.password,
-                    }),
-                    {
-                        'Content-Type': 'application/json'
-                    },
-                ); // a string points to the backend
-                // console.log(responseData)
-                auth.login();
+                    formData
+                );
+
+                auth.login(responseData.user.id);
             } catch (err) { }
         }
 
@@ -131,7 +128,7 @@ const Auth = () => {
                             errorText="Please enter a name"
                             onInput={inputHandler}
                         />}
-                    {!isLogin && <ImageUpload center id="image" onInput={inputHandler}/>}
+                    {!isLogin && <ImageUpload center id="image" onInput={inputHandler} />}
                     <Input
                         id="email"
                         element="input"
