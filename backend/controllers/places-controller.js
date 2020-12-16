@@ -90,7 +90,7 @@ const createPlace = async (req, res, next) => {
     const createdPlace = new Place({
         title,
         description,
-        image: 'https://images.app.goo.gl/vi8KGGrd3bBseVRi9',
+        image: req.file.path,
         address,
         location: coordinates,
         creator

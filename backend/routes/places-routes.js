@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 const placesControllers = require("../controllers/places-controller");
 
 const router = express.Router();
+const fileUpload = require('../middleware/file-upload');
 
 // Goal of this API: have a get request where id is part of the URL
 // return the information with the id p1, thus the id should be encoded in the url
@@ -20,6 +21,7 @@ router.get("/user/:uid", placesControllers.getPlacesbyUserId);
 // therefore the post request should contain just a slash '/'
 router.post(
     "/", 
+    fileUpload.single('image'),
     [
         check('title')
             .not()
