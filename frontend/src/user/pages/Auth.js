@@ -102,7 +102,6 @@ const Auth = () => {
                     'POST',
                     formData
                 );
-
                 auth.login(responseData.user.id);
             } catch (err) { }
         }

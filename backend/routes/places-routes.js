@@ -4,7 +4,7 @@ const placesControllers = require("../controllers/places-controller");
 
 const router = express.Router();
 const fileUpload = require('../middleware/file-upload');
-
+const checkAuth = require("../middleware/check-auth");
 // Goal of this API: have a get request where id is part of the URL
 // return the information with the id p1, thus the id should be encoded in the url
 
@@ -16,7 +16,10 @@ router.get("/", (req, res, next) => {
 router.get('/:pid', placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacesbyUserId);
+// the first two routes are open to everyone
 
+// request without the token cannot access the following routes.
+router.use(checkAuth); 
 // any post request that targets /api/places/ will automatically reach this post route here.  
 // therefore the post request should contain just a slash '/'
 router.post(
