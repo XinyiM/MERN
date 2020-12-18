@@ -75,7 +75,7 @@ const createPlace = async (req, res, next) => {
         next(new HttpError("Invalid inputs passed, please check your data.", 422));
     }
     //get data from post request body.
-    const { title, description, address, creator } = req.body;
+    const { title, description, address } = req.body;
 
     // use await when call an async function
     let coordinates;
@@ -93,12 +93,12 @@ const createPlace = async (req, res, next) => {
         image: req.file.path,
         address,
         location: coordinates,
-        creator
+        creator: req.userData.userId // get the userId from the CheckAuth userData
     });
 
     let user;
     try {
-        user = await User.findById(creator);
+        user = await User.findById(req.userData.userId);
     } catch (err) {
         const error = new HttpError(
             'Creating place failed, please try again.',
