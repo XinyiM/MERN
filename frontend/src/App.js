@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -13,37 +13,10 @@ import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UpdatePlace from './places/pages/UpdatePlaces';
 import Auth from './user/pages/Auth';
 import { AuthContext } from './shared/context/auth-context';
-
+import { useAuth } from './shared/hooks/auth-hook';
 
 const App = () => {
-  const [token, setToken] = useState(false);
-  const [userId, setUserId] = useState(false);
-  // APP component is the first one when renders
-  
-  const login = useCallback((uid, token) => {
-    setToken(token);
-    setUserId(uid);
-    localStorage.setItem('userData', JSON.stringify({
-      userId: uid,
-      token: token
-    }));
-    // auto log-in
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
-    localStorage.removeItem('userData');
-  }, []);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData')); 
-    // get the data stored using JSON format
-    // convert JSON data to normal JS object
-    if(storedData && storedData.token){
-      login(storedData.userId, storedData.token); // trigger the login logic
-    }
-  }, [login]); // no dependencies so only render once.
+  const {token, login, logout, userId } = useAuth();
 
   let routes;
   if (token) {
