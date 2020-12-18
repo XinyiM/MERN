@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     // store the token in the header
+    if(req.method === 'OPTIONS'){
+        return next();
+    } // this fixed the bug of net::ERR_FAILED.
     try {
         const token = req.headers.authorization.split(' ')[1]; // Authorization: 'Bear TOKEN'
         if (!token) {
