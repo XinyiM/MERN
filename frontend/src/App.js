@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -18,18 +18,32 @@ import { AuthContext } from './shared/context/auth-context';
 const App = () => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
+  // APP component is the first one when renders
+  
   const login = useCallback((uid, token) => {
     setToken(token);
     setUserId(uid);
-    localStorage.setItem('useData', JSON.stringify({
+    localStorage.setItem('userData', JSON.stringify({
       userId: uid,
       token: token
     }));
+    // auto log-in
   }, []);
+
   const logout = useCallback(() => {
     setToken(null);
-    setUserId(null)
+    setUserId(null);
+    localStorage.removeItem('userData');
   }, []);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('userData')); 
+    // get the data stored using JSON format
+    // convert JSON data to normal JS object
+    if(storedData && storedData.token){
+      login(storedData.userId, storedData.token); // trigger the login logic
+    }
+  }, [login]); // no dependencies so only render once.
 
   let routes;
   if (token) {
