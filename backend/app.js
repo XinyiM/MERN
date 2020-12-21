@@ -58,8 +58,11 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || "An unknown error occured!"});
 });
 
+console.log(process.env.JWT_KEY);
+console.log(process.env.DB_NAME);
+
 mongoose
-    .connect('mongodb+srv://new_user:36BI6H05ZpG3JrkM@cluster0.oxhrw.mongodb.net/mern?retryWrites=true&w=majority') 
+    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.oxhrw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`) 
     .then(() => {
 // listen on a server port
         app.listen(5000);
